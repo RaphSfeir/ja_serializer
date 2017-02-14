@@ -31,9 +31,11 @@ defmodule <%= module %>ControllerTest do
     %{}
   end<% end %>
 
-  test "lists all entries on index", %{conn: conn} do
+  test "/<%= plural %> GET show all entries, with pagination", %{conn: conn} do
     conn = get conn, <%= singular %>_path(conn, :index)
     assert json_response(conn, 200)["data"] == []
+    assert json_response(conn, 200)["links"]["self"] =~ "/<%= plural %>?page[page]=1"
+    assert json_response(conn, 200)["meta"]["total_pages"]
   end
 
   test "shows chosen resource", %{conn: conn} do

@@ -6,9 +6,21 @@ defmodule <%= module %>Controller do
 
   plug :scrub_params, "data" when action in [:create, :update]
 
+  def index(conn, %{"page" => params}) do
+    <%= plural %> = <%= alias %>
+      |> order_by(asc: :id)
+      |> Repo.paginate(params)
+
+    meta_data = %{
+      total_entries: <%= plural %>.total_entries,
+      total_pages: <%= plural %>.total_pages
+    }
+
+    render(conn, "index.json-api", data: <%= plural %>, opts: [meta: meta_data])
+  end
+
   def index(conn, _params) do
-    <%= plural %> = Repo.all(<%= alias %>)
-    render(conn, "index.json-api", data: <%= plural %>)
+    index(conn, %{"page" => %{page: 0}})
   end
 
   def create(conn, %{"data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
