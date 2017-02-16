@@ -6,6 +6,11 @@ defmodule <%= module %>Controller do
 
   plug :scrub_params, "data" when action in [:create, :update]
 
+  @type page_params :: %{ "page" : %{page: integer }}
+  @type id_param :: { "id": integer }
+  @type <%= singular %>_data :: %{ "id": integer, "data": %{ "type": String.t, "attributes": map}}
+
+  @spec index(Plug.conn.t, page_params) :: Plug.Conn.t
   def index(conn, %{"page" => params}) do
     <%= plural %> = <%= alias %>
       |> order_by(asc: :id)
@@ -19,10 +24,12 @@ defmodule <%= module %>Controller do
     render(conn, "index.json-api", data: <%= plural %>, opts: [meta: meta_data])
   end
 
+  @spec index(Plug.Conn.t, any) :: Plug.Conn.t
   def index(conn, _params) do
     index(conn, %{"page" => %{page: 0}})
   end
 
+  @spec create(Plug.Conn.t, <%= singular %>_data) :: Plug.Conn.t
   def create(conn, %{"data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
     changeset = <%= alias %>.changeset(%<%= alias %>{}, Params.to_attributes(data))
 
@@ -39,11 +46,13 @@ defmodule <%= module %>Controller do
     end
   end
 
+  @spec show(Plug.Conn.t, id_param) :: Plug.Conn.t
   def show(conn, %{"id" => id}) do
     <%= singular %> = Repo.get!(<%= alias %>, id)
     render(conn, "show.json-api", data: <%= singular %>)
   end
 
+  @spec update(Plug.Conn.t, <%= singular %>_data) :: Plug.Conn.t
   def update(conn, %{"id" => id, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
     <%= singular %> = Repo.get!(<%= alias %>, id)
     changeset = <%= alias %>.changeset(<%= singular %>, Params.to_attributes(data))
@@ -58,6 +67,7 @@ defmodule <%= module %>Controller do
     end
   end
 
+  @spec delete(Plug.Conn.t, id_param) :: Plug.Conn.t
   def delete(conn, %{"id" => id}) do
     <%= singular %> = Repo.get!(<%= alias %>, id)
 
