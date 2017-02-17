@@ -6,11 +6,11 @@ defmodule <%= module %>Controller do
 
   plug :scrub_params, "data" when action in [:create, :update]
 
-  @type page_params :: %{"page" : %{page: integer}}
-  @type id_param :: {"id": integer}
+  @type page_params :: %{"page": %{page: integer}}
+  @type id_param :: %{"id": integer}
   @type <%= singular %>_data :: %{"id": integer, "data": %{"type": String.t, "attributes": map}}
 
-  @spec index(Plug.conn.t, page_params) :: Plug.Conn.t
+  @spec index(Plug.Conn.t, <%= singular %>_data) :: Plug.Conn.t
   def index(conn, %{"page" => params}) do
     <%= plural %> = <%= alias %>
       |> order_by(asc: :id)

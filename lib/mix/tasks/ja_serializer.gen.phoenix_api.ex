@@ -1,4 +1,3 @@
-if Code.ensure_loaded?(Phoenix) do
   defmodule Mix.Tasks.JaSerializer.Gen.PhoenixApi do
     use Mix.Task
 
@@ -149,4 +148,3 @@ if Code.ensure_loaded?(Phoenix) do
     defp non_references_strings({k, _v}),                  do: k
 
   end
-end
